@@ -1,0 +1,40 @@
+﻿@page "/workoutlogs"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using PersonalFitnessApp.Domain
+@using PersonalFitnessApp.Data
+@implements IAsyncDisposable
+@inject PersonalFitnessAppContext DbContext
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="workoutlogs/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.WorkoutLog">
+    <PropertyColumn Property="workoutlog => workoutlog.Date" />
+    <PropertyColumn Property="workoutlog => workoutlog.Exercise" />
+    <PropertyColumn Property="workoutlog => workoutlog.Duration" />
+    <PropertyColumn Property="workoutlog => workoutlog.CaloriesBurnt" />
+    <PropertyColumn Property="workoutlog => workoutlog.UserId" />
+
+    <TemplateColumn Context="workoutlog">
+        <a href="@($"workoutlogs/edit?id={workoutlog.Id}")">Edit</a> |
+        <a href="@($"workoutlogs/details?id={workoutlog.Id}")">Details</a> |
+        <a href="@($"workoutlogs/delete?id={workoutlog.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private PersonalFitnessAppContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbContext;
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

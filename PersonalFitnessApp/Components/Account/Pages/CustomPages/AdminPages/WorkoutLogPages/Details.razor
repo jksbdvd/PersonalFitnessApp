@@ -1,0 +1,55 @@
+﻿@page "/workoutlogs/details"
+@using Microsoft.EntityFrameworkCore
+@using PersonalFitnessApp.Domain
+@using PersonalFitnessApp.Data
+@inject PersonalFitnessAppContext DbContext
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>WorkoutLog</h2>
+    <hr />
+    @if (workoutlog is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Date</dt>
+            <dd class="col-sm-10">@workoutlog.Date</dd>
+            <dt class="col-sm-2">Exercise</dt>
+            <dd class="col-sm-10">@workoutlog.Exercise</dd>
+            <dt class="col-sm-2">Duration</dt>
+            <dd class="col-sm-10">@workoutlog.Duration</dd>
+            <dt class="col-sm-2">CaloriesBurnt</dt>
+            <dd class="col-sm-10">@workoutlog.CaloriesBurnt</dd>
+            <dt class="col-sm-2">UserId</dt>
+            <dd class="col-sm-10">@workoutlog.UserId</dd>
+        </dl>
+        <div>
+            <a href="@($"/workoutlogs/edit?id={workoutlog.Id}")">Edit</a> |
+            <a href="@($"/workoutlogs")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private WorkoutLog? workoutlog;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var context = DbContext;
+        workoutlog = await context.WorkoutLog.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (workoutlog is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

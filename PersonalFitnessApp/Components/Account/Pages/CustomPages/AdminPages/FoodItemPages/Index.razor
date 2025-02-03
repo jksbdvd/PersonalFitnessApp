@@ -1,0 +1,40 @@
+﻿@page "/fooditems"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using PersonalFitnessApp.Domain
+@using PersonalFitnessApp.Data
+@implements IAsyncDisposable
+@inject PersonalFitnessAppContext DbContext
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="fooditems/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.FoodItem">
+    <PropertyColumn Property="fooditem => fooditem.Name" />
+    <PropertyColumn Property="fooditem => fooditem.Calories" />
+    <PropertyColumn Property="fooditem => fooditem.Carbohydrates" />
+    <PropertyColumn Property="fooditem => fooditem.Protein" />
+    <PropertyColumn Property="fooditem => fooditem.Fibre" />
+
+    <TemplateColumn Context="fooditem">
+        <a href="@($"fooditems/edit?id={fooditem.Id}")">Edit</a> |
+        <a href="@($"fooditems/details?id={fooditem.Id}")">Details</a> |
+        <a href="@($"fooditems/delete?id={fooditem.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private PersonalFitnessAppContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbContext;
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

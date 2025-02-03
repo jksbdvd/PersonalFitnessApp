@@ -7,5 +7,6 @@ namespace PersonalFitnessApp.Data
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
+        public int Steps { get; set; }
     }
 }

@@ -1,0 +1,12 @@
+﻿@page "/AdminEdit"
+
+@attribute [Authorize(Roles = "Administrator")]
+
+<PageTitle>Database Editing</PageTitle>
+
+<h2>Choose a database to edit</h2>
+<ul>
+    <li><a href="bookings">Bookings</a></li>
+    <li><a href="fooditems">Food Items</a></li>
+    <li><a href="workoutlogs">Workouts</a></li>
+</ul>

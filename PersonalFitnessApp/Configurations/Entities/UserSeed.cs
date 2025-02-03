@@ -17,8 +17,20 @@ namespace PersonalFitnessApp.Configurations.Entities
                 NormalizedEmail = "ADMIN@LOCALHOST.COM",
                 FirstName = "Admin",
                 LastName = "istrator",
-                UserName = "Admin",
-                NormalizedUserName = "ADMIN",
+                UserName = "Admin@localhost.com",
+                NormalizedUserName = "ADMIN@LOCALHOST.COM",
+                PasswordHash = hasher.HashPassword(null, "P@ssword1"),
+                EmailConfirmed = true
+            },
+            new PersonalFitnessAppUser
+            {
+                Id = "1ac84b12-0afd-4bbd-aba0-5ea727f934f4",
+                Email = "coach@coaching.com",
+                NormalizedEmail = "COACH@COACHING.COM",
+                FirstName = "Coach",
+                LastName = "Coach",
+                UserName = "Coach@coaching.com",
+                NormalizedUserName = "COACH@COACHING.COM",
                 PasswordHash = hasher.HashPassword(null, "P@ssword1"),
                 EmailConfirmed = true
             }

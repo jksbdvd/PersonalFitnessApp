@@ -1,0 +1,55 @@
+﻿@page "/trackingitems/create"
+@using Microsoft.EntityFrameworkCore
+@using PersonalFitnessApp.Domain
+@using PersonalFitnessApp.Data
+@inject PersonalFitnessAppContext DbContext
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>TrackingItem</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="TrackingItem" OnValidSubmit="AddTrackingItem" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="foodqty" class="form-label">FoodQty:</label> 
+                <InputNumber id="foodqty" @bind-Value="TrackingItem.FoodQty" class="form-control" /> 
+                <ValidationMessage For="() => TrackingItem.FoodQty" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="foodtrackingid" class="form-label">FoodTrackingId:</label> 
+                <InputNumber id="foodtrackingid" @bind-Value="TrackingItem.FoodTrackingId" class="form-control" /> 
+                <ValidationMessage For="() => TrackingItem.FoodTrackingId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="fooditemid" class="form-label">FoodItemId:</label> 
+                <InputNumber id="fooditemid" @bind-Value="TrackingItem.FoodItemId" class="form-control" /> 
+                <ValidationMessage For="() => TrackingItem.FoodItemId" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/trackingitems">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private TrackingItem TrackingItem { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddTrackingItem()
+    {
+        var context = DbContext;
+        context.TrackingItem.Add(TrackingItem);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/trackingitems");
+    }
+}

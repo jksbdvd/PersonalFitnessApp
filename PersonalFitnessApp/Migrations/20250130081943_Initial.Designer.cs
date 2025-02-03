@@ -12,7 +12,7 @@ using PersonalFitnessApp.Data;
 namespace PersonalFitnessApp.Migrations
 {
     [DbContext(typeof(PersonalFitnessAppContext))]
-    [Migration("20241205025700_Initial")]
+    [Migration("20250130081943_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -63,6 +63,12 @@ namespace PersonalFitnessApp.Migrations
                             Id = "5375ee94-cd25-4752-ace8-dfce3ff54acd",
                             Name = "User",
                             NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "17c9b3f5-54b9-44bc-9bce-42bc8d8ac8bb",
+                            Name = "Coach",
+                            NormalizedName = "COACH"
                         });
                 });
 
@@ -157,6 +163,11 @@ namespace PersonalFitnessApp.Migrations
                         {
                             UserId = "ebc7974b-6cb5-497a-b5e4-bdb31c58c886",
                             RoleId = "e731d37a-9f2c-4ce6-90ab-1f7b7244a561"
+                        },
+                        new
+                        {
+                            UserId = "1ac84b12-0afd-4bbd-aba0-5ea727f934f4",
+                            RoleId = "17c9b3f5-54b9-44bc-9bce-42bc8d8ac8bb"
                         });
                 });
 
@@ -254,7 +265,7 @@ namespace PersonalFitnessApp.Migrations
                         {
                             Id = "ebc7974b-6cb5-497a-b5e4-bdb31c58c886",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4233c98e-80d6-4212-9d71-984bfcfa675b",
+                            ConcurrencyStamp = "5e517884-db4a-4dd7-aed8-ca1b493b12cd",
                             Email = "admin@localhost.com",
                             EmailConfirmed = true,
                             FirstName = "Admin",
@@ -262,12 +273,196 @@ namespace PersonalFitnessApp.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPEd4RiBbGkJ7yRxao+CeMaZixRsCx1FtFgu+WB4PxWlVmsQlC1omJ/4g2E3dtoMLQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKjsKM32Jo8sSSpLTym/qV+JfJhDt63zuLRuL22GLhgZY3rFFBHK9vkszc2HvHw/cg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "7e5c03de-9cfc-47c0-9f79-697285fe9dfd",
+                            SecurityStamp = "a529c04a-b0bb-4471-83c3-4392ba6ef3cd",
                             TwoFactorEnabled = false,
-                            UserName = "admin@localhost.com"
+                            UserName = "Admin@localhost.com"
+                        },
+                        new
+                        {
+                            Id = "1ac84b12-0afd-4bbd-aba0-5ea727f934f4",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "1899b6d3-064f-4086-95a3-313b69431328",
+                            Email = "coach@coaching.com",
+                            EmailConfirmed = true,
+                            FirstName = "Coach",
+                            LastName = "Coach",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "COACH@COACHING.COM",
+                            NormalizedUserName = "COACH@COACHING.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIYv+dseTS4KjT1DiQngG2P2aehqKGBAdlR5C4Et/ofnXDu7/PtpKWE0pcJ2QjJaJQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "df58c207-5e74-4308-a4cd-970abfef9df6",
+                            TwoFactorEnabled = false,
+                            UserName = "Coach@coaching.com"
                         });
+                });
+
+            modelBuilder.Entity("PersonalFitnessApp.Domain.Booking", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Booking");
+                });
+
+            modelBuilder.Entity("PersonalFitnessApp.Domain.FoodItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Calories")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Carbohydrates")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Fibre")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Protein")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FoodItem");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Calories = 418,
+                            Carbohydrates = 30,
+                            Fibre = 1,
+                            Name = "Mcdonalds Hamburger",
+                            Protein = 25
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Calories = 377,
+                            Carbohydrates = 4,
+                            Fibre = 0,
+                            Name = "KFC drumstick",
+                            Protein = 40
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Calories = 299,
+                            Carbohydrates = 38,
+                            Fibre = 1,
+                            Name = "Chicken Rice",
+                            Protein = 30
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Calories = 285,
+                            Carbohydrates = 36,
+                            Fibre = 3,
+                            Name = "Dominos Chesse Pizza (1 Slice)",
+                            Protein = 12
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Calories = 20,
+                            Carbohydrates = 4,
+                            Fibre = 2,
+                            Name = "Salad",
+                            Protein = 1
+                        });
+                });
+
+            modelBuilder.Entity("PersonalFitnessApp.Domain.FoodTracking", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FoodTracking");
+                });
+
+            modelBuilder.Entity("PersonalFitnessApp.Domain.TrackingItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("FoodItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FoodQty")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FoodTrackingId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TrackingItem");
+                });
+
+            modelBuilder.Entity("PersonalFitnessApp.Domain.WorkoutLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CaloriesBurnt")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Duration")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Exercise")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WorkoutLog");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -1,0 +1,60 @@
+﻿@page "/foodtrackings/delete"
+@using Microsoft.EntityFrameworkCore
+@using PersonalFitnessApp.Domain
+@using PersonalFitnessApp.Data
+@inject PersonalFitnessAppContext DbContext
+@inject NavigationManager NavigationManager
+
+<PageTitle>Delete</PageTitle>
+
+<h1>Delete</h1>
+
+<p>Are you sure you want to delete this?</p>
+<div>
+    <h2>FoodTracking</h2>
+    <hr />
+    @if (foodtracking is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Date</dt>
+            <dd class="col-sm-10">@foodtracking.Date</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">UserId</dt>
+            <dd class="col-sm-10">@foodtracking.UserId</dd>
+        </dl>
+        <EditForm method="post" Model="foodtracking" OnValidSubmit="DeleteFoodTracking" FormName="delete" Enhance>
+            <button type="submit" class="btn btn-danger" disabled="@(foodtracking is null)">Delete</button> |
+            <a href="/foodtrackings">Back to List</a>
+        </EditForm>
+    }
+</div>
+
+@code {
+    private FoodTracking? foodtracking;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var context = DbContext;
+        foodtracking = await context.FoodTracking.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (foodtracking is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    private async Task DeleteFoodTracking()
+    {
+        var context = DbContext;
+        context.FoodTracking.Remove(foodtracking!);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/foodtrackings");
+    }
+}

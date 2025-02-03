@@ -21,6 +21,12 @@ namespace PersonalFitnessApp.Configurations.Entities
                 Id = "5375ee94-cd25-4752-ace8-dfce3ff54acd",
                 Name = "User",
                 NormalizedName = "USER"
+            },
+            new IdentityRole
+            {
+                Id = "17c9b3f5-54b9-44bc-9bce-42bc8d8ac8bb",
+                Name = "Coach",
+                NormalizedName = "COACH"
             }
             );
         }

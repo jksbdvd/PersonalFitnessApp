@@ -1,0 +1,65 @@
+﻿@page "/workoutlogs/create"
+@using Microsoft.EntityFrameworkCore
+@using PersonalFitnessApp.Domain
+@using PersonalFitnessApp.Data
+@inject PersonalFitnessAppContext DbContext
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>WorkoutLog</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="WorkoutLog" OnValidSubmit="AddWorkoutLog" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="date" class="form-label">Date:</label> 
+                <InputDate id="date" @bind-Value="WorkoutLog.Date" class="form-control" /> 
+                <ValidationMessage For="() => WorkoutLog.Date" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="exercise" class="form-label">Exercise:</label> 
+                <InputText id="exercise" @bind-Value="WorkoutLog.Exercise" class="form-control" /> 
+                <ValidationMessage For="() => WorkoutLog.Exercise" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="duration" class="form-label">Duration:</label> 
+                <InputDate id="duration" @bind-Value="WorkoutLog.Duration" class="form-control" /> 
+                <ValidationMessage For="() => WorkoutLog.Duration" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="caloriesburnt" class="form-label">CaloriesBurnt:</label> 
+                <InputNumber id="caloriesburnt" @bind-Value="WorkoutLog.CaloriesBurnt" class="form-control" /> 
+                <ValidationMessage For="() => WorkoutLog.CaloriesBurnt" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="userid" class="form-label">UserId:</label> 
+                <InputText id="userid" @bind-Value="WorkoutLog.UserId" class="form-control" /> 
+                <ValidationMessage For="() => WorkoutLog.UserId" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/workoutlogs">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private WorkoutLog WorkoutLog { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddWorkoutLog()
+    {
+        var context = DbContext;
+        context.WorkoutLog.Add(WorkoutLog);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/workoutlogs");
+    }
+}

@@ -1,0 +1,96 @@
+﻿@page "/bookings/edit"
+@using Microsoft.EntityFrameworkCore
+@using PersonalFitnessApp.Domain
+@using PersonalFitnessApp.Data
+@inject PersonalFitnessAppContext DbContext
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Booking</h2>
+<hr />
+@if (Booking is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Booking" OnValidSubmit="UpdateBooking" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Booking.Id" value="@Booking.Id" />
+                <div class="mb-3">
+                    <label for="date" class="form-label">Date:</label>
+                    <InputDate id="date" @bind-Value="Booking.Date" class="form-control" />
+                    <ValidationMessage For="() => Booking.Date" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="status" class="form-label">Status:</label>
+                    <InputText id="status" @bind-Value="Booking.Status" class="form-control" />
+                    <ValidationMessage For="() => Booking.Status" class="text-danger" />
+                </div>
+                <input type="hidden" name="Booking.UserId" value=@Booking.UserId />
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/bookings">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Booking? Booking { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var context = DbContext;
+        Booking ??= await context.Booking.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Booking is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateBooking()
+    {
+        var context = DbContext;
+        context.Attach(Booking!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!BookingExists(Booking!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/bookings");
+    }
+
+    private bool BookingExists(int id)
+    {
+        var context = DbContext;
+        return context.Booking.Any(e => e.Id == id);
+    }
+}

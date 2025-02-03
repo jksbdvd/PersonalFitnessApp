@@ -1,0 +1,65 @@
+﻿@page "/fooditems/create"
+@using Microsoft.EntityFrameworkCore
+@using PersonalFitnessApp.Domain
+@using PersonalFitnessApp.Data
+@inject PersonalFitnessAppContext DbContext
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>FoodItem</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="FoodItem" OnValidSubmit="AddFoodItem" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label> 
+                <InputText id="name" @bind-Value="FoodItem.Name" class="form-control" /> 
+                <ValidationMessage For="() => FoodItem.Name" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="calories" class="form-label">Calories:</label> 
+                <InputNumber id="calories" @bind-Value="FoodItem.Calories" class="form-control" /> 
+                <ValidationMessage For="() => FoodItem.Calories" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="carbohydrates" class="form-label">Carbohydrates:</label> 
+                <InputNumber id="carbohydrates" @bind-Value="FoodItem.Carbohydrates" class="form-control" /> 
+                <ValidationMessage For="() => FoodItem.Carbohydrates" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="protein" class="form-label">Protein:</label> 
+                <InputNumber id="protein" @bind-Value="FoodItem.Protein" class="form-control" /> 
+                <ValidationMessage For="() => FoodItem.Protein" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="fibre" class="form-label">Fibre:</label> 
+                <InputNumber id="fibre" @bind-Value="FoodItem.Fibre" class="form-control" /> 
+                <ValidationMessage For="() => FoodItem.Fibre" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/fooditems">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private FoodItem FoodItem { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddFoodItem()
+    {
+        var context = DbContext;
+        context.FoodItem.Add(FoodItem);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/fooditems");
+    }
+}
