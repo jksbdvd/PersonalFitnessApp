@@ -1,0 +1,141 @@
+﻿@page "/workoutlogs"
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using PersonalFitnessApp.Domain
+@using PersonalFitnessApp.Data
+@implements IAsyncDisposable
+@inject PersonalFitnessAppContext DbContext
+@inject UserManager<PersonalFitnessAppUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<PageTitle>Index</PageTitle>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #000;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        text-align: center;
+        color: #FFD700;
+        font-size: 2.5rem;
+        margin: 20px 0;
+    }
+
+    p {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    a {
+        color: #FFD700;
+        text-decoration: none;
+        padding: 5px 10px;
+        border: 2px solid #FFD700;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        margin-right: 15px;
+        display: inline-block;
+        width: auto;
+    }
+
+        a:hover {
+            background-color: #FFD700;
+            color: #000;
+        }
+
+    .table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+
+        .table td, .table th {
+            padding: 12px 20px;
+            text-align: left;
+            border: 1px solid #FFD700;
+        }
+
+        .table th {
+            background-color: #000;
+            color: #FFD700;
+        }
+
+        .table td {
+            background-color: #000;
+            color: #FFD700;
+        }
+
+        .table a {
+            color: #FFD700;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+            .table a:hover {
+                background-color: #FFD700;
+                color: #000;
+            }
+
+        .table .btn-container {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+
+    .btn-container a {
+        width: auto;
+        margin: 0;
+    }
+</style>
+
+<h1>Index</h1>
+
+<p>
+    <a href="workoutlogs/create">Create New</a>
+    <a href="lessons">View lessons</a>
+</p>
+
+<QuickGrid Class="table" Items="filteredWorkouts">
+    <PropertyColumn Property="workoutlog => workoutlog.Date" />
+    <PropertyColumn Property="workoutlog => workoutlog.Exercise" />
+    <PropertyColumn Property="workoutlog => workoutlog.Duration" Format="HH:mm:ss" />
+    <PropertyColumn Property="workoutlog => workoutlog.CaloriesBurnt" />
+    @if (isAdmin)
+    {
+        <PropertyColumn Property="workoutlog => workoutlog.UserId" />
+    }
+    <TemplateColumn Context="workoutlog">
+        <a href="@($"workoutlogs/details?id={workoutlog.Id}")">Details</a>
+        <AuthorizeView Roles="Administrator">
+            <a href="@($"workoutlogs/edit?id={workoutlog.Id}")">Edit</a>
+            <a href="@($"workoutlogs/delete?id={workoutlog.Id}")">Delete</a>
+        </AuthorizeView>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private PersonalFitnessAppContext context = default!;
+    private IQueryable<WorkoutLog> filteredWorkouts = Enumerable.Empty<WorkoutLog>().AsQueryable();
+    private bool isAdmin = false;
+    protected async override Task OnInitializedAsync()
+    {
+        context = DbContext;
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = await UserManager.GetUserAsync(authenticationState.User);
+        var userId = user.Id;
+        isAdmin = authenticationState.User.IsInRole("Administrator");
+        filteredWorkouts = isAdmin
+            ? context.WorkoutLog  // If admin, get all bookings
+            : context.WorkoutLog.Where(b => b.UserId == userId);
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

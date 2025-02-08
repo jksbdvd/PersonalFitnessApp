@@ -1,11 +1,37 @@
-﻿@page "/fooditems/create"
+﻿@page "/bookings/create"
+@using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
-@using PersonalFitnessApp.Domain
 @using PersonalFitnessApp.Data
+@using PersonalFitnessApp.Domain
 @inject PersonalFitnessAppContext DbContext
 @inject NavigationManager NavigationManager
+@inject UserManager<PersonalFitnessAppUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
-<PageTitle>Create</PageTitle>
+<PageTitle>Create Booking</PageTitle>
+
+<h1 class="page-title">Create Booking</h1>
+
+<div class="form-container">
+    <h2>New Booking</h2>
+    <hr />
+    <EditForm method="post" Model="Booking" OnValidSubmit="AddBooking" FormName="create" Enhance>
+        <DataAnnotationsValidator />
+        <ValidationSummary class="text-danger" role="alert" />
+        <div class="form-group">
+            <label for="date" class="form-label">Date:</label>
+            <InputDate id="date" @bind-Value="Booking.Date" class="form-control" />
+            <ValidationMessage For="() => Booking.Date" class="text-danger" />
+        </div>
+        <div class="centered">
+            <button type="submit" class="btn">Create</button>
+            <a href="/bookings" class="btn">Back to List</a>
+        </div>
+    </EditForm>
+</div>
+
+
+
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -128,60 +154,22 @@
                 transform: scale(1.05);
             }
 </style>
-<h1>Create</h1>
-
-<h2>FoodItem</h2>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <EditForm method="post" Model="FoodItem" OnValidSubmit="AddFoodItem" FormName="create" Enhance>
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert"/>
-            <div class="mb-3">
-                <label for="name" class="form-label">Name:</label> 
-                <InputText id="name" @bind-Value="FoodItem.Name" class="form-control" /> 
-                <ValidationMessage For="() => FoodItem.Name" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="calories" class="form-label">Calories:</label> 
-                <InputNumber id="calories" @bind-Value="FoodItem.Calories" class="form-control" /> 
-                <ValidationMessage For="() => FoodItem.Calories" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="carbohydrates" class="form-label">Carbohydrates:</label> 
-                <InputNumber id="carbohydrates" @bind-Value="FoodItem.Carbohydrates" class="form-control" /> 
-                <ValidationMessage For="() => FoodItem.Carbohydrates" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="protein" class="form-label">Protein:</label> 
-                <InputNumber id="protein" @bind-Value="FoodItem.Protein" class="form-control" /> 
-                <ValidationMessage For="() => FoodItem.Protein" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="fibre" class="form-label">Fibre:</label> 
-                <InputNumber id="fibre" @bind-Value="FoodItem.Fibre" class="form-control" /> 
-                <ValidationMessage For="() => FoodItem.Fibre" class="text-danger" /> 
-            </div>
-            <div>
-                <button type="submit" class="btn">Create</button>
-                <a href="/fooditems" class="btn">Back to List</a>
-            </div>
-        </EditForm>
-    </div>
-</div>
-
-
-
 @code {
     [SupplyParameterFromForm]
-    private FoodItem FoodItem { get; set; } = new();
+    private Booking Booking { get; set; } = new();
 
-    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
-    private async Task AddFoodItem()
+    private async Task AddBooking()
     {
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        var user = authenticationState.User;
+        var appUser = await UserManager.GetUserAsync(user);
+        Booking.UserId = appUser.Id;
+        Booking.Status = "Pending";
+
         var context = DbContext;
-        context.FoodItem.Add(FoodItem);
+        context.Booking.Add(Booking);
         await context.SaveChangesAsync();
-        NavigationManager.NavigateTo("/fooditems");
+        NavigationManager.NavigateTo("/bookings");
     }
 }

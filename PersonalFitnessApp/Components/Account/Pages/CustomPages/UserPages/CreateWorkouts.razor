@@ -1,0 +1,239 @@
+﻿@page "/workoutlogs/create"
+@using Microsoft.AspNetCore.Identity
+@using PersonalFitnessApp.Data
+@using PersonalFitnessApp.Domain
+@using System.ComponentModel.DataAnnotations
+
+@inject UserManager<PersonalFitnessAppUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject PersonalFitnessAppContext DbContext
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #000;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1, h2 {
+        text-align: center;
+        color: #FFD700;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        margin: 20px 0;
+    }
+
+    h2 {
+        font-size: 2rem;
+        margin: 10px 0;
+    }
+
+    hr {
+        border: none;
+        height: 2px;
+        background-color: #FFD700;
+        margin: 10px 0;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #111;
+        border-radius: 8px;
+        border: 3px solid #FFD700;
+        box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+    }
+
+    .form-group label {
+        font-weight: bold;
+        color: #FFD700;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .form-label {
+        color: #FFD700;
+        font-weight: bold;
+    }
+
+    .form-control,
+    select,
+    input[type="number"] {
+        width: 100%;
+        padding: 8px;
+        background-color: #111;
+        color: #FFD700;
+        border: 2px solid #FFD700;
+        border-radius: 5px;
+        outline: none;
+        transition: border-color 0.3s ease, background-color 0.3s ease;
+    }
+
+        select:focus,
+        input[type="number"]:focus {
+            background-color: #111 !important;
+            border-color: #FFD700;
+            color: #FFD700;
+        }
+
+    select {
+        background-color: #111 !important;
+        color: #FFD700 !important;
+        border: 2px solid #FFD700 !important;
+    }
+
+        select option {
+            background-color: #111 !important;
+            color: #FFD700 !important;
+        }
+
+        select:focus option {
+            background-color: #111 !important;
+            color: #FFD700 !important;
+        }
+
+
+    .alert {
+        background-color: #111;
+        color: #FFD700;
+        border: 2px solid #FFD700;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 10px;
+    }
+
+    .btn {
+        background-color: #000;
+        color: #FFD700;
+        border: 2px solid #FFD700;
+        padding: 10px 20px;
+        font-weight: bold;
+        border-radius: 5px;
+        transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+        cursor: pointer;
+    }
+
+        .btn:hover {
+            background-color: #FFD700;
+            color: #000;
+            transform: scale(1.05);
+        }
+</style>
+
+<h1>Create</h1>
+
+<h2>Workout Logs</h2>
+<hr />
+<div class="container">
+    <EditForm Model="exerciseModel" OnValidSubmit="SubmitExercise" FormName="c" Enhance>
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="exercise">Choose an Exercise:</label>
+            <InputSelect id="exercise" @bind-Value="exerciseModel.SelectedExercise" class="form-control">
+                <option value="">-- Select an Exercise --</option>
+                <option value="Push Up">Push Up</option>
+                <option value="Squat">Squat</option>
+                <option value="Lunges">Lunges</option>
+                <option value="Pull Up">Pull Up</option>
+                <option value="Plank">Plank</option>
+            </InputSelect>
+            <ValidationMessage For="() => exerciseModel.SelectedExercise" />
+        </div>
+
+        <div class="form-group">
+            <label for="duration">Duration:</label>
+            <div style="display: flex; gap: 10px;">
+                <div>
+                    <InputNumber id="hours" @bind-Value="exerciseModel.Hours" min="0" step="1" max="23" class="form-control" />
+                    <label for="hours" class="form-label">H</label>
+                </div>
+                <div>
+                    <InputNumber id="minutes" @bind-Value="exerciseModel.Minutes" min="0" step="1" max="59" class="form-control" />
+                    <label for="minutes" class="form-label">M</label>
+                </div>
+                <div>
+                    <InputNumber id="seconds" @bind-Value="exerciseModel.Seconds" min="0" step="1" max="59" class="form-control" />
+                    <label for="seconds" class="form-label">S</label>
+                </div>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(ValidationMessage))
+        {
+            <div class="alert">@ValidationMessage</div>
+        }
+
+        <button type="submit" class="btn">Submit</button>
+    </EditForm>
+</div>
+
+@code {
+    private WorkoutLog workout = new();
+    [SupplyParameterFromForm]
+    private ExerciseModel exerciseModel { get; set; } = new();
+    private DateTime duration;
+    private string ValidationMessage { get; set; }
+    private readonly Dictionary<string, double> exerciseCalories = new Dictionary<string, double>
+    {
+        { "Push Up", 20 },
+        { "Squat", 25 },
+        { "Lunges", 30 },
+        { "Pull Up", 40 },
+        { "Plank", 15 }
+    };
+
+    private async Task SubmitExercise()
+    {
+        if (exerciseModel.Hours == 0 && exerciseModel.Minutes == 0 && exerciseModel.Seconds == 0)
+        {
+            ValidationMessage = "Please enter a valid duration!.";
+            return;
+        }
+        else
+        {
+            ValidationMessage = null;
+        }
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var appUser = await UserManager.GetUserAsync(authenticationState.User);
+        DateTime baseTime = DateTime.MinValue;
+        duration = baseTime.AddHours(exerciseModel.Hours).AddMinutes(exerciseModel.Minutes).AddSeconds(exerciseModel.Seconds);
+        workout.Duration = duration;
+        workout.Date = DateTime.Now;
+        workout.Exercise = exerciseModel.SelectedExercise;
+        workout.CaloriesBurnt = CalculateCalories();
+        workout.UserId = appUser.Id;
+        DbContext.WorkoutLog.Add(workout);
+        await DbContext.SaveChangesAsync();
+        NavigationManager.NavigateTo("/workoutlogs");
+    }
+
+    private int CalculateCalories()
+    {
+        if (exerciseCalories.TryGetValue(exerciseModel.SelectedExercise, out var caloriesPerHour))
+        {
+            return (int)Math.Round(caloriesPerHour * (duration - DateTime.MinValue).TotalHours);
+        }
+        return 0;
+    }
+
+    public class ExerciseModel
+    {
+        [Required(ErrorMessage = "Please select an exercise!")]
+        public string SelectedExercise { get; set; }
+        public DateTime Date { get; set; }
+
+        public int Hours { get; set; }
+        public int Minutes { get; set; }
+        public int Seconds { get; set; }
+    }
+}

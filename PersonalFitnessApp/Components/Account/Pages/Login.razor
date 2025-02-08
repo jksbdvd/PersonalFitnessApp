@@ -1,6 +1,4 @@
-﻿@page "/"
-
-@attribute [AllowAnonymous]
+﻿@page "/Account/Login"
 
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Authentication
@@ -13,10 +11,107 @@
 @inject IdentityRedirectManager RedirectManager
 
 <PageTitle>Log in</PageTitle>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #000;
+        color: #FFD700;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .login-container {
+        background-color: #111;
+        border: 2px solid #FFD700;
+        border-radius: 10px;
+        width: 350px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    }
+
+        .login-container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .form-group input[type="email"],
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #FFD700;
+            border-radius: 5px;
+            background-color: #222;
+            color: #FFD700;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #FFF;
+        }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+    }
+
+    .form-actions {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+        .form-actions button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #FFD700;
+            border: none;
+            border-radius: 5px;
+            color: #000;
+            cursor: pointer;
+            text-align:center;
+            transition: background-color 0.3s ease;
+        }
+
+            .form-actions button:hover {
+                background-color: #000;
+            }
+
+    .links {
+        margin-top: 15px;
+    }
+
+        .links a {
+            color: #FFD700;
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 5px;
+            display: block;
+        }
+
+            .links a:hover {
+                text-decoration: underline;
+            }
+</style>
 
 <h1>Log in</h1>
 <div class="row">
-    <div class="col-md-4">
+    <div class="login">
         <section>
             <StatusMessage Message="@errorMessage" />
             <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
@@ -24,26 +119,26 @@
                 <h2>Use a local account to log in.</h2>
                 <hr />
                 <ValidationSummary class="text-danger" role="alert" />
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                <div class="form-group">
                     <label for="email" class="form-label">Email</label>
+                    <InputText type="email" @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
                     <ValidationMessage For="() => Input.Email" class="text-danger" />
                 </div>
-                <div class="form-floating mb-3">
-                    <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                <div class="form-group">
                     <label for="password" class="form-label">Password</label>
+                    <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
                     <ValidationMessage For="() => Input.Password" class="text-danger" />
                 </div>
-                <div class="checkbox mb-3">
+                <div class="form-group checkbox-group">
                     <label class="form-label">
                         <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input" />
                         Remember me
                     </label>
                 </div>
-                <div>
+                <div class="form-actions">
                     <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
                 </div>
-                <div>
+                <div class="links">
                     <p>
                         <a href="Account/ForgotPassword">Forgot your password?</a>
                     </p>
@@ -55,13 +150,6 @@
                     </p>
                 </div>
             </EditForm>
-        </section>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to log in.</h3>
-            <hr />
-            <ExternalLoginPicker />
         </section>
     </div>
 </div>
