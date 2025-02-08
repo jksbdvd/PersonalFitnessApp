@@ -1,161 +1,77 @@
 ﻿@page "/Homepage"
 @using Microsoft.AspNetCore.Identity
-@using Microsoft.EntityFrameworkCore
 @using PersonalFitnessApp.Data
 @inject UserManager<PersonalFitnessAppUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject PersonalFitnessAppContext DbContext;
+
 <PageTitle>Home</PageTitle>
-<img class="logo" src="https://i.imgur.com/leuBtD5.png" alt="Profile Picture" />
 
-<div class="homepage-container">
-    <h1 class="welcome-message">Hey, @Name!</h1>
-    <div class="links">
-        <a href="Account/Manage">Settings</a>
-        <a href="/feedback/index">View Feedback</a>
-    </div>
-
-    <div class="progress-section">
-        <div align="left" class="progress-item">
-            <label>Steps:</label>
-            <progress value=@Steps max="5000"></progress>
-            <span>@Steps / 5000 steps</span>
-        </div>
-        <div align="left" class="progress-item">
-            <label>Calories:</label>
-            <progress value=@Calories max="2000"></progress>
-            <span>@Calories / 2000 kcal</span>
-        </div>
-    </div>
-
-    <div class="action-links">
-        <a href="trackingitems">Calories Tracker</a>
-        <a href="workoutlogs/create">Customize Workouts</a>
-        <a href="bookings">Book A Class</a>
-        <AuthorizeView Roles="Administrator">
-            <a href="AdminEdit">Edit Database</a>
-        </AuthorizeView>
-    </div>
-</div>
-
+<img src="data:image/jpeg;base64,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" />
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #000;
-        color: #fff;
-        margin: 0;
-        padding: 0;
-    }
-
-    .homepage-container {
-        padding: 20px;
-    }
-
-    .logo {
-        width: 150px;
-        display: block;
-    }
-
-    .welcome-message {
-        font-size: 2rem;
-        color: #FFD700;
-    }
-
-    .links {
-        margin-top: 10px;
-    }
-
-        .links a {
-            font-size: 1rem;
-            color: #FFD700;
-            margin: 0 10px;
-        }
-
-            .links a:hover {
-                text-decoration: blink;
-            }
-
-    .progress-section {
-        margin: 30px 0;
-        color:#FFD700;
-    }
-
-    .progress-item {
-        margin-bottom: 20px;
-    }
-
-        .progress-item label {
-            display: block;
-            font-size: 1.2rem;
-            color: #FFD700;
-            margin-bottom: 5px;
-        }
-
     progress {
-        width: 70%;
-        height: 25px;
-        border-radius: 5px;
-        margin-bottom: 5px;
+    width: 70%;
+    height: 30px;
+    border-radius: 5px;
     }
 
-        progress::-webkit-progress-bar {
-            background-color: #333;
-            border-radius: 5px;
-        }
-
-        progress::-webkit-progress-value {
-            background-color: #FFD700;
-            border-radius: 5px;
-        }
-
-        progress::-moz-progress-bar {
-            background-color: #FFD700;
-            border-radius: 5px;
-        }
-
-    .action-links {
-        margin-top: 20px;
+    progress::-webkit-progress-bar {
+    background-color: #f3f3f3;
+    border-radius: 5px;
     }
 
-        .action-links a {
-            display: inline-block;
-            font-size: 1rem;
-            color: #FFD700;
-            text-decoration: none;
-            margin: 10px;
-            padding: 10px 20px;
-            border: 2px solid #FFD700;
-            border-radius: 5px;
-            transition: all 0.3s ease-in-out;
-        }
+    progress::-webkit-progress-value {
+    background-color: #4caf50;
+    border-radius: 5px;
+    }
 
-            .action-links a:hover {
-                background-color: #FFD700;
-                color: #000;
-            }
+    progress::-moz-progress-bar {
+    background-color: #4caf50;
+    border-radius: 5px;
+    }
 </style>
+
+<h1>
+    <span style="font-size: 30px;">Hey, @Name!</span>
+    <a href="Account/Manage" style="font-size: 15px;">Settings</a>
+</h1>
+
+<progress value=@Steps max="5000"></progress>
+@Steps/5000 steps
+
+<progress value=@Calories max="2000"></progress>
+@Calories/5000kcal
+
+<br>
+<a style="margin-top: 20px;" href="Account/Manage">Calories Tracker</a>
+<a href="Account/Manage">Customize Workouts</a>
+<a href="bookings">Book A Class</a>
+
+
+
+
+
 
 @code {
     private string? Name;
     private int Steps;
     private int Calories;
+
     protected override async Task OnInitializedAsync()
     {
+
         var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
         var user = authenticationState.User;
         var appUser = await UserManager.GetUserAsync(user);
-        Name = appUser.FirstName + " " + appUser.LastName;
-        if (appUser.Steps == 0)
-        {
+        Name = appUser.FirstName+" "+appUser.LastName;
+        if(appUser.Steps==0){
             Random random = new Random();
             Steps = random.Next(0, 5001);
             appUser.Steps = Steps;
             await UserManager.UpdateAsync(appUser);
         }
-        else
-        {
+        else{
             Steps = appUser.Steps;
         }
-        Calories = appUser.Calories;
     }
 }

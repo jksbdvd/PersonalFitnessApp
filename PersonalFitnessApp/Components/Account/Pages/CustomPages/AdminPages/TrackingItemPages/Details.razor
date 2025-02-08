@@ -6,91 +6,10 @@
 @inject NavigationManager NavigationManager
 
 <PageTitle>Details</PageTitle>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #000;
-        color: #fff;
-        margin: 0;
-        padding: 0;
-    }
 
-    h1 {
-        text-align: center;
-        font-size: 2.5rem;
-        margin: 20px 0;
-        color: #FFD700;
-    }
-
-    h2 {
-        color: #FFD700;
-    }
-
-    .details-container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #111;
-        border-radius: 8px;
-        border: 3px solid #FFD700;
-        box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
-    }
-
-    hr {
-        border: none;
-        height: 2px;
-        background-color: #FFD700;
-        margin: 10px 0;
-    }
-
-    .loading-message {
-        text-align: center;
-        font-size: 1.2rem;
-        color: #FFD700;
-    }
-
-    .details-list {
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        gap: 10px;
-        color: #eee;
-    }
-
-        .details-list dt {
-            font-weight: bold;
-            color: #FFD700 !important;
-        }
-
-        .details-list dd {
-            margin: 0;
-            color: #FFD700 !important;
-        }
-
-
-    .action-links {
-        margin-top: 20px;
-        text-align: center;
-    }
-
-    a {
-        text-decoration:none;
-        color: #FFD700;
-        border: 2px solid #FFD700;
-        padding: 10px 20px;
-        font-weight: bold;
-        border-radius: 5px;
-        background-color: #000;
-        transition: transform 0.3s ease, background-color 0.3s ease;
-    }
-
-       a:hover {
-            background-color: #FFD700;
-            color: #000;
-        }
-</style>
 <h1>Details</h1>
 
-<div class="details-container">
+<div>
     <h2>TrackingItem</h2>
     <hr />
     @if (trackingitem is null)
@@ -98,7 +17,7 @@
         <p><em>Loading...</em></p>
     }
     else {
-        <dl class="details-list">
+        <dl class="row">
             <dt class="col-sm-2">FoodQty</dt>
             <dd class="col-sm-10">@trackingitem.FoodQty</dd>
             <dt class="col-sm-2">FoodTrackingId</dt>
@@ -107,7 +26,7 @@
             <dd class="col-sm-10">@trackingitem.FoodItemId</dd>
         </dl>
         <div>
-            <a href="@($"/trackingitems/edit?id={trackingitem.Id}")">Edit</a>
+            <a href="@($"/trackingitems/edit?id={trackingitem.Id}")">Edit</a> |
             <a href="@($"/trackingitems")">Back to List</a>
         </div>
     }

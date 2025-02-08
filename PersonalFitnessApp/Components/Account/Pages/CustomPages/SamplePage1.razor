@@ -1,0 +1,44 @@
+﻿@page "/editform-example"
+
+<h3>Editable Form Example</h3>
+
+<EditForm Model="@formModel" OnValidSubmit="HandleValidSubmit" FormName="2">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="name">Name:</label>
+        <InputText id="name" class="form-control" @bind-Value="formModel.Name" />
+    </div>
+
+    <div class="form-group">
+        <label for="age">Age:</label>
+        <InputNumber id="age" class="form-control" @bind-Value="formModel.Age" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</EditForm>
+
+<h4>Saved Data:</h4>
+<p>Name: @savedName</p>
+<p>Age: @savedAge</p>
+
+@code {
+    [SupplyParameterFromForm]
+    private FormModel formModel { get; set; } = new FormModel();
+    private string savedName;
+    private int savedAge;
+
+    private void HandleValidSubmit()
+    {
+        // Save form data to variables
+        savedName = formModel.Name;
+        savedAge = formModel.Age;
+    }
+
+    public class FormModel
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+    }
+}

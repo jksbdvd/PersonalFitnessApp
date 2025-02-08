@@ -195,9 +195,6 @@ namespace PersonalFitnessApp.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<int>("Calories")
-                        .HasColumnType("int");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -268,8 +265,7 @@ namespace PersonalFitnessApp.Migrations
                         {
                             Id = "ebc7974b-6cb5-497a-b5e4-bdb31c58c886",
                             AccessFailedCount = 0,
-                            Calories = 0,
-                            ConcurrencyStamp = "a2cd10c9-5617-49f4-a892-d36ddde6ba6f",
+                            ConcurrencyStamp = "e251b4a6-9b40-4db8-a88d-d7b66d2440fd",
                             Email = "admin@localhost.com",
                             EmailConfirmed = true,
                             FirstName = "Admin",
@@ -277,9 +273,9 @@ namespace PersonalFitnessApp.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEDyZ+yvuC2xG3vjqXRZlxonJ6S0jeMPY8gfaARqIdPg31eggVTGwDVYWibnEA4+gtw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEL5nUvx4+azO78IH76kDMq/dsgHrWBoeYCZLb43+y9LAF73Bty5KEvhN+clcvqHL3g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "bc1a7472-fd23-43f7-97d3-218312f7c0dd",
+                            SecurityStamp = "ddb02ba7-e6da-43f3-a424-e04d2e88b421",
                             Steps = 0,
                             TwoFactorEnabled = false,
                             UserName = "Admin@localhost.com"
@@ -288,8 +284,7 @@ namespace PersonalFitnessApp.Migrations
                         {
                             Id = "1ac84b12-0afd-4bbd-aba0-5ea727f934f4",
                             AccessFailedCount = 0,
-                            Calories = 0,
-                            ConcurrencyStamp = "f3717874-5069-4a41-b9e2-4213c2e39454",
+                            ConcurrencyStamp = "63e5bc66-b2ff-4110-966e-d40dce85b53c",
                             Email = "coach@coaching.com",
                             EmailConfirmed = true,
                             FirstName = "Coach",
@@ -297,9 +292,9 @@ namespace PersonalFitnessApp.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "COACH@COACHING.COM",
                             NormalizedUserName = "COACH@COACHING.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJy1RZszb9HE+VC30V8ULFqgXz7j409uB9xq/u9SExDXWoBDaqvK5WIyfq8/FS1kEg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMqr3g/po6R4za8mBsXBI5DVgfDs1Fcr3Rzoaz8hIVu20TmPil+p2yh7hhKk+yJ0UQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3749af33-68a4-4fb7-8921-a3883fd4f715",
+                            SecurityStamp = "ba873fdd-da09-4ecf-bf46-fefa29ee59e8",
                             Steps = 0,
                             TwoFactorEnabled = false,
                             UserName = "Coach@coaching.com"
@@ -328,33 +323,6 @@ namespace PersonalFitnessApp.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Booking");
-                });
-
-            modelBuilder.Entity("PersonalFitnessApp.Domain.Feedback", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("GivenDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("GiverName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Feedback");
                 });
 
             modelBuilder.Entity("PersonalFitnessApp.Domain.FoodItem", b =>
@@ -557,15 +525,6 @@ namespace PersonalFitnessApp.Migrations
                 });
 
             modelBuilder.Entity("PersonalFitnessApp.Domain.Booking", b =>
-                {
-                    b.HasOne("PersonalFitnessApp.Data.PersonalFitnessAppUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("PersonalFitnessApp.Domain.Feedback", b =>
                 {
                     b.HasOne("PersonalFitnessApp.Data.PersonalFitnessAppUser", "User")
                         .WithMany()

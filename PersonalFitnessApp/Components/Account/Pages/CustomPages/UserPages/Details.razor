@@ -1,0 +1,55 @@
+﻿@page "/bookings/details"
+@using Microsoft.EntityFrameworkCore
+@using PersonalFitnessApp.Domain
+@using PersonalFitnessApp.Data
+@inject PersonalFitnessAppContext DbContext
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Booking</h2>
+    <hr />
+    @if (booking is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Date</dt>
+            <dd class="col-sm-10">@booking.Date</dd>
+            <dt class="col-sm-2">Status</dt>
+            <dd class="col-sm-10">@booking.Status</dd>
+            <AuthorizeView Roles="Administrator">
+                <dt class="col-sm-2">UserId</dt>
+                <dd class="col-sm-10">@booking.UserId</dd>
+            </AuthorizeView>
+        </dl>
+        <div>
+            <AuthorizeView Roles="Administrator">
+                <a href="@($"/bookings/edit?id={booking.Id}")">Edit</a> |
+            </AuthorizeView>
+            <a href="@($"/bookings")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Booking? booking;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var context = DbContext;
+        booking = await context.Booking.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (booking is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

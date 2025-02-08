@@ -1,4 +1,4 @@
-﻿@page "/bookings/edit"
+﻿@page "/foodtrackings/edit"
 @using Microsoft.EntityFrameworkCore
 @using PersonalFitnessApp.Domain
 @using PersonalFitnessApp.Data
@@ -9,9 +9,9 @@
 
 <h1>Edit</h1>
 
-<h2>Booking</h2>
+<h2>FoodTracking</h2>
 <hr />
-@if (Booking is null)
+@if (FoodTracking is null)
 {
     <p><em>Loading...</em></p>
 }
@@ -19,21 +19,20 @@ else
 {
     <div class="row">
         <div class="col-md-4">
-            <EditForm method="post" Model="Booking" OnValidSubmit="UpdateBooking" FormName="edit" Enhance>
+            <EditForm method="post" Model="FoodTracking" OnValidSubmit="UpdateFoodTracking" FormName="edit" Enhance>
                 <DataAnnotationsValidator />
                 <ValidationSummary role="alert"/>
-                <input type="hidden" name="Booking.Id" value="@Booking.Id" />
+                <input type="hidden" name="FoodTracking.Id" value="@FoodTracking.Id" />
                 <div class="mb-3">
                     <label for="date" class="form-label">Date:</label>
-                    <InputDate id="date" @bind-Value="Booking.Date" class="form-control" />
-                    <ValidationMessage For="() => Booking.Date" class="text-danger" />
+                    <InputDate id="date" @bind-Value="FoodTracking.Date" class="form-control" />
+                    <ValidationMessage For="() => FoodTracking.Date" class="text-danger" />
                 </div>
                 <div class="mb-3">
-                    <label for="status" class="form-label">Status:</label>
-                    <InputText id="status" @bind-Value="Booking.Status" class="form-control" />
-                    <ValidationMessage For="() => Booking.Status" class="text-danger" />
+                    <label for="userid" class="form-label">UserId:</label>
+                    <InputText id="userid" @bind-Value="FoodTracking.UserId" class="form-control" />
+                    <ValidationMessage For="() => FoodTracking.UserId" class="text-danger" />
                 </div>
-                <input type="hidden" name="Booking.UserId" value=@Booking.UserId />
                 <button type="submit" class="btn btn-primary">Save</button>
             </EditForm>
         </div>
@@ -41,7 +40,7 @@ else
 }
 
 <div>
-    <a href="/bookings">Back to List</a>
+    <a href="/foodtrackings">Back to List</a>
 </div>
 
 @code {
@@ -49,14 +48,14 @@ else
     private int Id { get; set; }
 
     [SupplyParameterFromForm]
-    private Booking? Booking { get; set; }
+    private FoodTracking? FoodTracking { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         var context = DbContext;
-        Booking ??= await context.Booking.FirstOrDefaultAsync(m => m.Id == Id);
+        FoodTracking ??= await context.FoodTracking.FirstOrDefaultAsync(m => m.Id == Id);
 
-        if (Booking is null)
+        if (FoodTracking is null)
         {
             NavigationManager.NavigateTo("notfound");
         }
@@ -64,10 +63,10 @@ else
 
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
-    private async Task UpdateBooking()
+    private async Task UpdateFoodTracking()
     {
         var context = DbContext;
-        context.Attach(Booking!).State = EntityState.Modified;
+        context.Attach(FoodTracking!).State = EntityState.Modified;
 
         try
         {
@@ -75,7 +74,7 @@ else
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!BookingExists(Booking!.Id))
+            if (!FoodTrackingExists(FoodTracking!.Id))
             {
                 NavigationManager.NavigateTo("notfound");
             }
@@ -85,12 +84,12 @@ else
             }
         }
 
-        NavigationManager.NavigateTo("/bookings");
+        NavigationManager.NavigateTo("/foodtrackings");
     }
 
-    private bool BookingExists(int id)
+    private bool FoodTrackingExists(int id)
     {
         var context = DbContext;
-        return context.Booking.Any(e => e.Id == id);
+        return context.FoodTracking.Any(e => e.Id == id);
     }
 }
