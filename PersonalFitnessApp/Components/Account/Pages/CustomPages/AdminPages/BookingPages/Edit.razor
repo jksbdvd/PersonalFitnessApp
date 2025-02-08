@@ -7,6 +7,116 @@
 
 <PageTitle>Edit</PageTitle>
 
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #000;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        color: #FFD700;
+        font-size: 2.5rem;
+        margin: 20px 0;
+    }
+
+    h2 {
+        text-align: center;
+        color: #FFD700;
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .form-label {
+        color: #FFD700;
+    }
+
+    .form-control {
+        background-color: #222;
+        border: 1px solid #FFD700;
+        color: #FFD700;
+    }
+
+        .form-control:focus {
+            background-color: #333;
+            border-color: #FFD700;
+            color: #FFD700;
+        }
+
+    .mb-3 {
+        margin-bottom: 15px;
+    }
+
+    .btn-primary {
+        background-color: transparent;
+        color: #FFD700;
+        border: 2px solid #FFD700;
+        border-radius: 5px;
+        font-weight: bold;
+        font-size: 0.5rem;
+        padding: 5px 20px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        width: 100%;
+        height: 50;
+        text-align: center;
+    }
+
+        .btn-primary:hover {
+            background-color: #FFD700;
+            color: #000;
+        }
+
+    .text-danger {
+        color: #FF0000;
+    }
+
+    .row {
+        margin-top: 20px;
+    }
+
+    .col-md-4 {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+        .col-md-4 input {
+            width: 100%;
+        }
+
+    .btn-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+        .btn-container a, .btn-container button {
+            padding: 5px 25px;
+            background-color: transparent;
+            color: #FFD700;
+            border: 2px solid #FFD700;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+            .btn-container a:hover, .btn-container button:hover {
+                background-color: #FFD700;
+                color: #000;
+            }
+
+
+    button[type="submit"] {
+        display: inline-block;
+    }
+
+
+</style>
+
 <h1>Edit</h1>
 
 <h2>Booking</h2>
@@ -19,9 +129,9 @@ else
 {
     <div class="row">
         <div class="col-md-4">
-            <EditForm method="post" Model="Booking" OnValidSubmit="UpdateBooking" FormName="edit" Enhance>
+            <EditForm method="post" Model="Booking" FormName="f" OnValidSubmit="UpdateBooking">
                 <DataAnnotationsValidator />
-                <ValidationSummary role="alert"/>
+                <ValidationSummary role="alert" />
                 <input type="hidden" name="Booking.Id" value="@Booking.Id" />
                 <div class="mb-3">
                     <label for="date" class="form-label">Date:</label>
@@ -34,15 +144,15 @@ else
                     <ValidationMessage For="() => Booking.Status" class="text-danger" />
                 </div>
                 <input type="hidden" name="Booking.UserId" value=@Booking.UserId />
-                <button type="submit" class="btn btn-primary">Save</button>
+                <div class="btn-container">
+                    <button type="submit" class="btn-primary">Save</button>
+                    <a href="/bookings" class="btn-primary">Back to List</a>
+                </div>
             </EditForm>
         </div>
     </div>
-}
 
-<div>
-    <a href="/bookings">Back to List</a>
-</div>
+}
 
 @code {
     [SupplyParameterFromQuery]
@@ -62,8 +172,6 @@ else
         }
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task UpdateBooking()
     {
         var context = DbContext;

@@ -4,11 +4,11 @@
 @using Microsoft.AspNetCore.Identity
 @using PersonalFitnessApp.Data
 @inject NavigationManager NavigationManager
-
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject UserManager<PersonalFitnessAppUser> UserManager
 @inject SignInManager<PersonalFitnessAppUser> SignInManager
 @inject IdentityUserAccessor UserAccessor
-@inject AuthenticationStateProvider AuthenticationStateProvider
+
 
 <PageTitle>Profile</PageTitle>
 
@@ -17,79 +17,83 @@
 
 <div class="row">
     <div class="col-md-6">
-        @if (user != null)
+        @if (formModel != null)
         {
-            <EditForm Model="user" FormName="profileForm" OnValidSubmit="OnValidSubmitAsync">
+            <EditForm Model="@formModel" OnValidSubmit="HandleValidSubmit" FormName="ChangeProfile" Enhance>
                 <DataAnnotationsValidator />
-                <ValidationSummary class="text-danger" role="alert" />
-
-                <div class="form-floating mb-3">
-                    <input type="text" value="@user.UserName" class="form-control" placeholder="Please choose your username." disabled />
-                    <label for="username" class="form-label">Username</label>
+                <ValidationSummary />
+                <div class="form-group">
+                    <label for="username" class="form-label">Old First Name:</label>
+                    <input type="text" value="@OldFirstName" class="form-control" placeholder="Username" disabled />
                 </div>
-
                 <div class="form-floating mb-3">
-                    <InputText @bind-Value="user.FirstName" class="form-control" placeholder="Please enter your first name." />
-                    <label for="first-name" class="form-label">First Name</label>
-                    <ValidationMessage For="() => user.FirstName" class="text-danger" />
+                    <InputText id="firstname" class="form-control" @bind-Value="@formModel.FirstName" />
+                    <label class="form-label" for="firstname">New First Name:</label>
+                    <ValidationMessage For="@(() => formModel.FirstName)" class="text-danger" />
                 </div>
-
+                <div class="form-group">
+                    <label for="username" class="form-label">Old Last Name:</label>
+                    <input type="text" value="@OldLastName" class="form-control" placeholder="Username" disabled />
+                </div>
                 <div class="form-floating mb-3">
-                    <InputText @bind-Value="user.LastName" class="form-control" placeholder="Please enter your last name." />
-                    <label for="last-name" class="form-label">Last Name</label>
-                    <ValidationMessage For="() => user.LastName" class="text-danger" />
+                    <InputText id="lastname" class="form-control" @bind-Value="@formModel.LastName" />
+                    <label for="lastname" class="form-label">New Last Name:</label>
+                    <ValidationMessage For="@(() => formModel.LastName)" class="text-danger" />
                 </div>
-
+                <div class="form-group">
+                    <label for="username" class="form-label">Old Phone Number:</label>
+                    <input type="text" value="@OldNumber" class="form-control" placeholder="Username" disabled />
+                </div>
                 <div class="form-floating mb-3">
-                    <InputText @bind-Value="user.PhoneNumber" class="form-control" placeholder="Please enter your phone number." />
-                    <label for="phone-number" class="form-label">Phone Number</label>
-                    <ValidationMessage For="() => user.PhoneNumber" class="text-danger" />
+                    <InputText id="phone" class="form-control" @bind-Value="formModel.PhoneNumber" />
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <ValidationMessage For="@(() => formModel.PhoneNumber)" class="text-danger" />
                 </div>
+                <button type="submit" class="btn btn-primary">Save</button>
 
-                <button type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
             </EditForm>
         }
         else
         {
-            <p>Error loading user data...</p>
+            <p>Loading user data...</p>
         }
     </div>
 </div>
 
 @code {
     [SupplyParameterFromForm]
-    private PersonalFitnessAppUser user { get; set; } = new();
-
+    private FormModel formModel { get; set; } = new FormModel();
+    private PersonalFitnessAppUser? user { get; set; }
+    private string? OldFirstName;
+    private string? OldLastName;
+    private string? OldNumber;
     protected override async Task OnInitializedAsync()
     {
         var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        user = await UserManager.GetUserAsync(authenticationState.User);
-
+        var loggedInUser = authenticationState.User;
+        user = await UserManager.GetUserAsync(loggedInUser);
+        OldFirstName = user.FirstName;
+        OldLastName = user.LastName;
+        OldNumber = user.PhoneNumber;
     }
 
-    private async Task OnValidSubmitAsync()
+    private async Task HandleValidSubmit()
     {
-        Console.WriteLine(user.FirstName + " " + user.LastName + " " + user.PhoneNumber);
+        // Save form data to variables
+        user.FirstName = formModel.FirstName;
+        user.LastName = formModel.LastName;
+        user.PhoneNumber = formModel.PhoneNumber;
+        await UserManager.UpdateAsync(user);
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+    }
 
-        // Update the user's profile
-        if (user != null)
-        {
-
-            // If there are any other fields that need to be updated (like FirstName or LastName), we handle them here.
-            var result = await UserManager.UpdateAsync(user);
-
-            if (result.Succeeded)
-            {
-                Console.WriteLine(user.FirstName+" "+user.LastName+" "+user.PhoneNumber);
-                //NavigationManager.NavigateTo("/Account/Manage", true); // Forces a page refresh
-            }
-            else
-            {
-                foreach (var error in result.Errors)
-                {
-                    Console.WriteLine($"Error: {error.Description}"); // Log any errors
-                }
-            }
-        }
+    public class FormModel
+    {
+        [Required(ErrorMessage = "First name is required.")]
+        public string? FirstName { get; set; }
+        [Required(ErrorMessage = "Last name is required.")]
+        public string? LastName { get; set; }
+        [Phone(ErrorMessage = "Please input a valid phone number!")]
+        public string? PhoneNumber { get; set; }
     }
 }

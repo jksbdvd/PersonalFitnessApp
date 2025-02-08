@@ -6,12 +6,83 @@
 @inject NavigationManager NavigationManager
 
 <PageTitle>Delete</PageTitle>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #000;
+        color: #FFD700;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1, h2 {
+        text-align: center;
+        color: #FFD700;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        margin: 20px 0;
+    }
+
+    h2 {
+        font-size: 2rem;
+        margin: 10px 0;
+    }
+
+    hr {
+        border: none;
+        height: 2px;
+        background-color: #FFD700;
+        margin: 10px 0;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #111;
+        border-radius: 8px;
+        border: 3px solid #FFD700;
+        box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+    }
+
+    button {
+        background-color: #FFD700;
+        color: #000;
+        border: 2px solid #FFD700;
+        padding: 10px 20px;
+        font-weight: bold;
+        border-radius: 5px;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+        button:hover {
+            background-color: #e0c300;
+            transform: scale(1.05);
+        }
+
+    a {
+        color: #FFD700;
+        text-decoration: none;
+        padding: 10px 20px;
+        border: 2px solid #FFD700;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+        a:hover {
+            background-color: #FFD700;
+            color: #000;
+        }
+
+</style>
 
 <h1>Delete</h1>
 
 <p>Are you sure you want to delete this?</p>
 <div>
-    <h2>TrackingItem</h2>
+    <h2>Food Entry</h2>
     <hr />
     @if (trackingitem is null)
     {
@@ -19,7 +90,7 @@
     }
     else {
         <dl class="row">
-            <dt class="col-sm-2">FoodQty</dt>
+            <dt class="col-sm-2">Food Quantity</dt>
             <dd class="col-sm-10">@trackingitem.FoodQty</dd>
         </dl>
         <dl class="row">
@@ -31,7 +102,7 @@
             <dd class="col-sm-10">@trackingitem.FoodItemId</dd>
         </dl>
         <EditForm method="post" Model="trackingitem" OnValidSubmit="DeleteTrackingItem" FormName="delete" Enhance>
-            <button type="submit" class="btn btn-danger" disabled="@(trackingitem is null)">Delete</button> |
+            <button type="submit" class="btn btn-danger" disabled="@(trackingitem is null)">Delete</button>
             <a href="/trackingitems">Back to List</a>
         </EditForm>
     }
@@ -39,7 +110,7 @@
 
 @code {
     private TrackingItem? trackingitem;
-
+    private FoodTracking? foodtracking;
     [SupplyParameterFromQuery]
     private int Id { get; set; }
 
@@ -57,7 +128,11 @@
     private async Task DeleteTrackingItem()
     {
         var context = DbContext;
+        Console.WriteLine(trackingitem.FoodTrackingId);
+        foodtracking = context.FoodTracking.FirstOrDefault(item => item.Id == trackingitem.FoodTrackingId);
+        Console.WriteLine(foodtracking);
         context.TrackingItem.Remove(trackingitem!);
+        context.FoodTracking.Remove(foodtracking!);
         await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/trackingitems");
     }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using PersonalFitnessApp.Domain;
 
 namespace PersonalFitnessApp.Data
 {
@@ -8,5 +9,6 @@ namespace PersonalFitnessApp.Data
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public int Steps { get; set; }
+        public int Calories { get; set; }
     }
 }

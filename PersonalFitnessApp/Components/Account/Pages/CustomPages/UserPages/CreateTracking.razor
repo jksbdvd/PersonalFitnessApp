@@ -1,0 +1,211 @@
+﻿@page "/trackingitems/create"
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using PersonalFitnessApp.Domain
+@using PersonalFitnessApp.Data
+@inject PersonalFitnessAppContext DbContext
+@inject NavigationManager NavigationManager
+@inject PersonalFitnessAppContext DbContext
+@inject UserManager<PersonalFitnessAppUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+<PageTitle>Create</PageTitle>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #000;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1, h2 {
+        text-align: center;
+        color: #FFD700;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        margin: 20px 0;
+    }
+
+    h2 {
+        font-size: 2rem;
+        margin: 10px 0;
+    }
+
+    hr {
+        border: none;
+        height: 2px;
+        background-color: #FFD700;
+        margin: 10px 0;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #111;
+        border-radius: 8px;
+        border: 3px solid #FFD700;
+        box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+    }
+
+    .form-group label {
+        font-weight: bold;
+        color: #FFD700;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .form-label {
+        color: #FFD700;
+        font-weight: bold;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        background-color: #111;
+        color: #FFD700;
+        border: 2px solid #FFD700;
+        border-radius: 5px;
+        outline: none;
+        transition: border-color 0.3s ease, background-color 0.3s ease;
+    }
+
+        .form-control:focus {
+            background-color: #333;
+            border-color: #FFD700;
+            color: #FFD700;
+        }
+
+        .form-control::selection {
+            background-color: #FFD700;
+            color: #000;
+        }
+
+    .alert {
+        background-color: #111;
+        color: #FFD700;
+        border: 2px solid #FFD700;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 10px;
+    }
+
+    .btn {
+        background-color: #000;
+        color: #FFD700;
+        border: 2px solid #FFD700;
+        padding: 10px 20px;
+        font-weight: bold;
+        border-radius: 5px;
+        transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+        cursor: pointer;
+    }
+
+        .btn:hover {
+            background-color: #FFD700; 
+            color: #000; 
+            transform: scale(1.05);
+        }
+
+    .centered {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+        .centered a {
+            color: #FFD700;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 2px solid #FFD700;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+            .centered a:hover {
+                background-color: #FFD700;
+                color: #000;
+            }
+</style>
+
+<h1>Create</h1>
+<h2>FoodItem</h2>
+<hr />
+<div class="row container">
+    <div class="col-md-4" style="margin: auto;">
+        <EditForm method="post" Model="TrackingItem" OnValidSubmit="AddFoodItem" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+            <div class="form-group">
+                <label for="FoodItems">Select the food:</label>
+                <InputSelect id="FoodItems" class="form-control" @bind-Value="TrackingItem.FoodItemId">
+                    <option value="">-- Select Item --</option>
+                    @foreach (var item in FoodItems)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">Quantity:</label>
+                <InputNumber id="name" @bind-Value="TrackingItem.FoodQty" class="form-control" />
+                <ValidationMessage For="() => TrackingItem.FoodQty" class="text-danger" />
+            </div>
+            @if (!string.IsNullOrEmpty(ValidationMessage))
+            {
+                <div class="alert">@ValidationMessage</div>
+            }
+            <button type="submit" class="btn">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div class="centered">
+    <a href="/trackingitems">Back to List</a>
+</div>
+
+@code {
+    private PersonalFitnessAppContext context = default!;
+    private List<FoodItem> FoodItems = new List<FoodItem>();
+    [SupplyParameterFromForm]
+    private TrackingItem TrackingItem { get; set; } = new();
+    private FoodTracking FoodTracking { get; set; } = new();
+    private string ValidationMessage { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        context = DbContext;
+        FoodItems = await context.FoodItem.ToListAsync();
+    }
+    private async Task AddFoodItem()
+    {
+        if (TrackingItem.FoodItemId == 7 && TrackingItem.FoodQty > 1)
+        {
+            ValidationMessage = "You cannot consume that much active uranium!";
+            return;
+        }
+        else
+        {
+            ValidationMessage = null;
+        }
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authenticationState.User;
+        var appUser = await UserManager.GetUserAsync(user);
+        FoodTracking.UserId = appUser.Id;
+        FoodTracking.Date = DateTime.Now;
+        context.FoodTracking.Add(FoodTracking);
+        await context.SaveChangesAsync();
+        var lastTrackingId = await context.FoodTracking.OrderByDescending(f => f.Id).Select(f => f.Id).FirstOrDefaultAsync();
+        TrackingItem.FoodTrackingId = lastTrackingId;
+        context.TrackingItem.Add(TrackingItem);
+        var item = DbContext.FoodItem.FirstOrDefault(i => i.Id == TrackingItem.FoodItemId);
+        var calories = item.Calories * TrackingItem.FoodQty;
+        appUser.Calories = appUser.Calories + calories;
+        await UserManager.UpdateAsync(appUser);
+        Console.WriteLine(appUser.Calories);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/trackingitems");
+    }
+}

@@ -1,0 +1,256 @@
+﻿@*Junyuan did this*@
+@page "/"
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABC FITNESS</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+        }
+
+        header {
+            position: relative;
+            padding: 200px 0;
+            text-align: center;
+            overflow: hidden;
+            border: 3px solid #FFD700;
+        }
+
+            header::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: url("https://cdn.shopify.com/s/files/1/0141/5242/t/16/assets/fitsix-4-bright_LIQo.jpg?v=162012172235");
+                background-size: cover;
+                background-position: center;
+                opacity: 0.5;
+                z-index: -1;
+            }
+
+            header h1, header p {
+                position: relative;
+                z-index: 1;
+            }
+
+        nav {
+            background-color: #111;
+            padding: 10px;
+            text-align: center;
+            border: 3px solid #FFD700;
+        }
+
+            nav a { /* Corrected: This was missing! */
+                display: inline-block;
+                padding: 10px 20px;
+                text-decoration: none;
+                color: #eee;
+                margin: 0 10px;
+                transition: background-color 0.3s ease;
+            }
+
+                nav a:hover {
+                    background-color: #333;
+                }
+
+        section {
+            padding: 20px;
+            margin: 20px;
+            background-color: #111;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+            border: 3px solid #FFD700;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+        }
+
+        footer {
+            background-color: #111;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            border: 3px solid #FFD700;
+        }
+
+        .workout-card {
+            border: none;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #222;
+            box-shadow: 0 2px 5px rgba(255, 255, 255, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            flex-basis: calc(33.33% - 20px);
+            margin: 10px;
+            box-sizing: border-box;
+            border: 3px solid #FFD700;
+        }
+
+            .workout-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+            }
+
+            .workout-card img {
+                max-width: 40%;
+                height: auto;
+                flex: 0 0 auto;
+                margin-right: 20px;
+            }
+
+        .workout-card-content {
+            flex: 1 1 auto;
+        }
+
+        .workout-card h3 {
+            margin-top: 0;
+            color: #ddd;
+        }
+
+        .workout-card p {
+            color: #ccc;
+        }
+
+            .workout-card p.duration {
+                margin-bottom: 0.5em;
+            }
+
+            .workout-card p.equipment {
+                margin-top: 0;
+            }
+
+        .workout-card strong {
+            font-weight: bold;
+        }
+
+        .workout-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            border: none;
+        }
+
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        @@media (max-width: 768px) {
+            .workout-card {
+                flex-basis: calc(50% - 20px);
+            }
+        }
+
+        @@media (max-width: 500px) {
+            .workout-card {
+                flex-basis: 100%;
+            }
+        }
+
+        body h1, body h2, body h3 {
+            font-weight: bold;
+        }
+
+        header h1 {
+            font-size: 3em;
+        }
+
+        .link {
+            display: block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #222;
+            color: #eee;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            border: 2px solid #FFD700;
+            text-align: center;
+            width: fit-content;
+            margin: 10px auto;
+        }
+
+            .link:hover {
+                background-color: #333;
+            }
+
+        .nav-item {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip {
+            visibility: hidden;
+            width: 120px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none; /* Prevent tooltip from blocking hover */
+        }
+
+        .nav-item:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ABC FITNESS</h1>
+        <p>Ready to embrace a healthier lifestyle?</p>
+        <a href="Account/Register" class="link">Register With Us</a>
+        <a href="Account/Login" class="link">Login</a>
+    </header>
+
+    <nav>
+        <div class="nav-item"> <a href="/Testimonials">Testimony</a> <div class="tooltip">Feedback and results from customers</div> </div>
+        <div class="nav-item"> <a href="/about">About Us</a> <div class="tooltip">Learn more about our team and mission</div> </div>
+        <div class="nav-item"> <a href="/contactus">Contact</a> <div class="tooltip">Get in touch with us</div> </div>@*oi junyuan where is this?*@
+    </nav>
+
+    <section class="welcome-section">
+        <h2>ABC Fitness: Unleash your potential</h2>
+        <p>Here  optimal workouts and giving top class nutritional advice</p>
+    </section>
+</body>
+

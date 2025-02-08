@@ -1,0 +1,145 @@
+﻿@*Junyuan did this*@
+@page "/testimonials"
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABC FITNESS - Testimonials</title>
+    <style>
+       body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #FFD700;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        nav {
+            text-align: center;
+            padding: 10px 0;
+            border-bottom: 3px solid #FFD700;
+            margin-bottom: 20px;
+        }
+
+        nav a {
+            color: #FFD700;
+            text-decoration: none;
+            margin: 0 15px; /* Space between links */
+        }
+
+        section {
+            padding: 20px;
+            margin: 20px;
+            background-color: #111;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(255, 215, 0, 0.2);
+            border: 3px solid #FFD700;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #111;
+            border-top: 3px solid #FFD700;
+            margin-top: 20px;
+        }
+
+        .testimonial-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .testimonial {
+            background-color: #111;
+            border: 3px solid #FFD700;
+            padding: 20px;
+            border-radius: 8px;
+            box-sizing: border-box;
+            width: calc(33.33% - 40px);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 8px rgba(255, 215, 0, 0.2);
+        }
+
+        .testimonial:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(255, 215, 0, 0.3);
+        }
+
+        .testimonial p {
+            margin-bottom: 10px;
+        }
+
+        .testimonial h3 {
+            margin-top: 0;
+        }
+
+        @@media (max-width: 768px) {
+            .testimonial {
+                width: calc(50% - 40px);
+            }
+        }
+
+        @@media (max-width: 500px) {
+            .testimonial {
+                width: 100%;
+            }
+        }
+
+        .register-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #FFD700;
+            color: #000;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .register-link:hover {
+            background-color: #FFD700;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ABC Fitness</h1>
+    </header>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/testimonials">Testimonials</a>
+        <a href="/about">About Us</a>
+    </nav>
+
+    <section>
+        <h2>Testimonials</h2>
+        <div class="testimonial-container">
+            <div class="testimonial">
+                <p>"ABC Fitness has completely changed my life! I've lost weight, gained muscle, and feel healthier than ever before. The trainers are amazing and the community is so supportive."</p>
+                <h3>- John Doe</h3>
+            </div>
+
+            <div class="testimonial">
+                <p>"I was hesitant to join a gym at first, but ABC Fitness made me feel so welcome. The variety of classes and the nutritional guidance have been invaluable."</p>
+                <h3>- Jane Smith</h3>
+            </div>
+
+            <div class="testimonial">
+                <p>"The personalized workout plans at ABC Fitness are exactly what I needed.</p>
+            </div>
+        </div>
+    </section>
+</body>

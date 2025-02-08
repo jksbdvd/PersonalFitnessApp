@@ -1,4 +1,4 @@
-﻿@page "/trackingitems"
+﻿@page "/trackingitems/admin"
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using PersonalFitnessApp.Domain
@@ -10,21 +10,80 @@
 
 <h1>Index</h1>
 
-<p>
-    <a href="trackingitems/create">Create New</a>
-</p>
+<QuickGrid Class="styled-grid" Items="context.TrackingItem">
+    <PropertyColumn Property="TrackingItem => TrackingItem.FoodTrackingId" />
+    <PropertyColumn Property="TrackingItem => TrackingItem.FoodItemId" />
+    <PropertyColumn Property="TrackingItem => TrackingItem.FoodQty" />
+    <PropertyColumn Property="TrackingItem => context.FoodTracking.FirstOrDefault(item => item.Id == TrackingItem.FoodTrackingId).UserId" />
 
-<QuickGrid Class="table" Items="context.TrackingItem">
-    <PropertyColumn Property="trackingitem => trackingitem.FoodQty" />
-    <PropertyColumn Property="trackingitem => trackingitem.FoodTrackingId" />
-    <PropertyColumn Property="trackingitem => trackingitem.FoodItemId" />
-
-    <TemplateColumn Context="trackingitem">
-        <a href="@($"trackingitems/edit?id={trackingitem.Id}")">Edit</a> |
-        <a href="@($"trackingitems/details?id={trackingitem.Id}")">Details</a> |
-        <a href="@($"trackingitems/delete?id={trackingitem.Id}")">Delete</a>
+    <TemplateColumn Context="TrackingItem">
+        <a class="links" href="@($"trackingitems/edit?id={TrackingItem.Id}")">Edit</a>
+        <a class ="links" href="@($"trackingitems/details?id={TrackingItem.Id}")">Details</a>
+        <a class ="links" href="@($"trackingitems/delete?id={TrackingItem.Id}")">Delete</a>
     </TemplateColumn>
 </QuickGrid>
+<a href="trackingitems" class="links">Back</a>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #000;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 2.5rem;
+        margin: 20px 0;
+        color: #FFD700;
+    }
+
+    .links {
+        color: #FFD700;
+        background-color: #000;
+        text-decoration: none;
+        padding: 5px 10px;
+        border: 2px solid #FFD700;
+        border-radius: 5px;
+        margin: 5px 0;
+        font-weight:bold;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+        .links:hover {
+            background-color: #FFD700;
+            color: #000;
+        }
+
+    .styled-grid {
+        width: 100%;
+        max-width: 1000px;
+        margin: 0 auto;
+        border: 3px solid #FFD700;
+        background-color: #111;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+    }
+
+        .styled-grid th {
+            background-color: #FFD700;
+            color:#000;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .styled-grid td {
+            padding: 10px;
+            border-bottom: 1px solid #333;
+            color: #FFD700;
+        }
+
+        .styled-grid tr:hover {
+            background-color: #222;
+        }
+</style>
 
 @code {
     private PersonalFitnessAppContext context = default!;

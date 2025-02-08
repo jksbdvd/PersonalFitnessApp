@@ -1,0 +1,133 @@
+﻿@page "/trackingitems"
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using PersonalFitnessApp.Domain
+@using PersonalFitnessApp.Data
+@implements IAsyncDisposable
+@inject PersonalFitnessAppContext DbContext
+@inject UserManager<PersonalFitnessAppUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<PageTitle>Tracking Items</PageTitle>
+
+<h1 class="page-title">Tracking Items</h1>
+
+<p>
+    <a href="trackingitems/create" class="action-link">Create New</a>
+</p>
+
+<QuickGrid Class="styled-grid" Items="combinedList">
+    <PropertyColumn Title="Date" Property="item => item.FoodTracking.Date" />
+    <PropertyColumn Title="Food Name" Property="item => item.FoodItem.Name" />
+    <PropertyColumn Title="Quantity" Property="item => item.TrackingItem.FoodQty" />
+    <PropertyColumn Title="Total Calories" Property="item => item.TrackingItem.FoodQty * item.FoodItem.Calories" />
+    <TemplateColumn Context="combinedList">
+        <AuthorizeView Roles="Administrator">
+            <a class="action-link" href="@($"trackingitems/edit?id={combinedList.TrackingItem.Id}")">Edit</a>
+            <a class="action-link" href="@($"trackingitems/delete?id={combinedList.TrackingItem.Id}")">Delete</a>
+        </AuthorizeView>
+    </TemplateColumn>
+</QuickGrid>
+
+<AuthorizeView Roles="Administrator">
+    <a href="trackingitems/admin" class="action-link">Toggle Admin View</a>
+</AuthorizeView>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #000;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 2.5rem;
+        margin: 20px 0;
+        color: #FFD700;
+    }
+
+    .action-link {
+        color: #FFD700;
+        text-decoration: none;
+        padding: 5px 10px;
+        border: 2px solid #FFD700;
+        border-radius: 5px;
+        margin: 5px 0;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+        .action-link:hover {
+            background-color: #FFD700;
+            color: #000;
+        }
+
+    .styled-grid {
+        width: 100%;
+        max-width: 1000px;
+        margin: 0 auto;
+        border: 3px solid #FFD700;
+        background-color: #111;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+    }
+
+        .styled-grid th {
+            background-color: #FFD700;
+            color: #000;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .styled-grid td {
+            padding: 10px;
+            border-bottom: 1px solid #333;
+            color: #FFD700;
+        }
+
+        .styled-grid tr:hover {
+            background-color: #222;
+        }
+</style>
+
+@code {
+    private IQueryable<CombinedData>? combinedList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var foodtrackings = await DbContext.FoodTracking.ToListAsync();
+        var trackingitems = await DbContext.TrackingItem.ToListAsync();
+        var fooditems = await DbContext.FoodItem.ToListAsync();
+
+        combinedList = foodtrackings
+            .Zip(trackingitems, (tracking, item) => new { tracking, item })
+            .Zip(fooditems, (temp, food) => new CombinedData
+                {
+                    TrackingItem = temp.item,
+                    FoodTracking = temp.tracking,
+                    FoodItem = fooditems.FirstOrDefault(item => item.Id == temp.item.FoodItemId)
+                })
+            .AsQueryable();
+
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var isAdmin = authenticationState.User.IsInRole("Administrator");
+        var user = await UserManager.GetUserAsync(authenticationState.User);
+        var userId = user.Id;
+
+        combinedList = isAdmin
+            ? combinedList  // If admin, get all bookings
+            : combinedList.Where(b => b.FoodTracking.UserId == userId);
+    }
+
+    public async ValueTask DisposeAsync() => await DbContext.DisposeAsync();
+
+    public class CombinedData
+    {
+        public FoodTracking FoodTracking { get; set; }
+        public TrackingItem TrackingItem { get; set; }
+        public FoodItem FoodItem { get; set; }
+    }
+}
