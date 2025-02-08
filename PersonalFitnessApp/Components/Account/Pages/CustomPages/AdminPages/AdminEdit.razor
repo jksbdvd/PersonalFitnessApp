@@ -4,9 +4,55 @@
 
 <PageTitle>Database Editing</PageTitle>
 
-<h2>Choose a database to edit</h2>
-<ul>
-    <li><a href="bookings">Bookings</a></li>
-    <li><a href="fooditems">Food Items</a></li>
-    <li><a href="workoutlogs">Workouts</a></li>
+<h2 class="page-title">Choose a Database to Edit</h2>
+<ul class="database-list">
+    <li><a class="link" href="bookings">Bookings</a></li>
+    <li><a class="link" href="fooditems">Food Items</a></li>
+    <li><a class="link" href="workoutlogs">Workouts</a></li>
 </ul>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #000;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 2rem;
+        margin: 20px 0;
+        color: #FFD700;
+    }
+
+    .database-list {
+        list-style: none;
+        padding: 0;
+        max-width: 600px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+        .database-list li {
+            margin: 15px 0;
+        }
+
+    .link {
+        display: inline-block;
+        font-size: 1.2rem;
+        color: #FFD700;
+        text-decoration: none;
+        font-weight:bold;
+        padding: 10px 20px;
+        border: 2px solid #FFD700;
+        border-radius: 5px;
+        transition: all 0.3s ease-in-out;
+    }
+
+        .link:hover {
+            background-color: #FFD700;
+            color: #000;
+        }
+</style>

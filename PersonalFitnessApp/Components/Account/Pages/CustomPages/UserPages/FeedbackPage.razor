@@ -1,6 +1,149 @@
-﻿namespace PersonalFitnessApp.Components.Account.Pages.CustomPages.UserPages
-{
-    public class FeedbackPage
+﻿@page "/feedback"
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using PersonalFitnessApp.Data
+@using PersonalFitnessApp.Domain
+@inject PersonalFitnessAppContext DbContext
+@inject NavigationManager NavigationManager
+@inject UserManager<PersonalFitnessAppUser> UserManager
+@inject RoleManager<IdentityRole> RoleManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@attribute [Authorize(Roles = "Coach,Administrator")]
+
+<PageTitle>Feedback Page</PageTitle>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #000;
+        color: #FFD700;
+    }
+
+    .container {
+        width: 60%;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #FFD700;
+        border-radius: 8px;
+        background-color: #111;
+    }
+
+    .feedback-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #FFD700;
+    }
+
+    textarea {
+        width: 100%;
+        height: 200px;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #FFD700;
+        border-radius: 5px;
+        resize: none;
+        color: #FFD700;
+        background-color: #333;
+    }
+
+    select {
+        background-color: #333 !important;
+        color: #FFD700 !important;
+        border: 2px solid #FFD700 !important;
+        padding: 8px;
+        font-size: 16px;
+        border-radius: 5px;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+        select:focus {
+            outline: none;
+            border-color: #FFD700;
+            background-color: #333;
+            color: #FFD700;
+        }
+
+
+
+    .submit-btn, .back-btn {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 20px;
+        font-size: 18px;
+        background-color: #000;
+        color: #FFD700;
+        border: 1px solid #FFD700;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .submit-btn:hover, .back-btn:hover {
+            background-color: #FFD700;
+            color: #000;
+        }
+
+    a {
+        color: #FFD700;
+        text-decoration: none;
+    }
+
+        a:hover {
+            color: #e0c300;
+        }
+</style>
+
+<div class="container">
+    <h2 class="feedback-title">Leave Feedback</h2>
+
+    <EditForm method="post" Model="feedback" OnValidSubmit="AddFeedback" FormName="create" Enhance>
+        <DataAnnotationsValidator />
+        <ValidationSummary class="text-danger" role="alert" />
+        <div class="mb-3">
+            <label for="feedback" class="form-label">Feedback:</label>
+            <InputTextArea id="feedback" @bind-Value="feedback.Message" class="form-control" placeholder="Write your feedback here..." />
+            <ValidationMessage For="() => feedback" class="text-danger" />
+        </div>
+        <div class="mb-3">
+            <label for="user" class="form-label">Select User:</label>
+            <InputSelect id="user" class="form-control" @bind-value="feedback.UserId">
+                <option value="">Select a user</option>
+                @foreach (var user in users)
+                {
+                    <option value=@user.Id>@(user.FirstName + " " + user.LastName)</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="() => feedback.UserId" class="text-danger" />
+        </div>
+
+        <button type="submit" class="submit-btn">Create</button>
+        <a class="back-btn" href="/feedback/index">Back</a>
+    </EditForm>
+</div>
+
+@code {
+    private List<PersonalFitnessAppUser> users { get; set; } = new();
+    private PersonalFitnessAppUser user { get; set; } = new();
+    [SupplyParameterFromForm]
+    private Feedback feedback { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
     {
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        user = await UserManager.GetUserAsync(authenticationState.User);
+        var roleusers = await UserManager.GetUsersInRoleAsync("User");
+        users = roleusers.ToList();
+    }
+
+    private async Task AddFeedback()
+    {
+        feedback.GivenDate = DateTime.Now;
+        var context = DbContext;
+        feedback.GiverName = user.FirstName + " " + user.LastName;
+        context.Feedback.Add(feedback);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/feedback");
     }
 }
